@@ -21,5 +21,8 @@ test/**
 node_modules/**
 link-test.md
 *.vsix
+*.log
+*.sh
+vscode-issue-draft.md
 **/*.map
 **/*.ts
