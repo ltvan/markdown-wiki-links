@@ -5,7 +5,7 @@ All notable changes to this extension are documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and
 this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.1.0] - 2026-08-30
 
 ### Added
 
@@ -15,7 +15,6 @@ this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
   whose **Show Problems** button opens the pane.
   Unopened files are read as UTF-8. Scan results persist until the next scan or
   the file is deleted or renamed; live diagnostics for open files are unchanged.
-
 - Footnote references in headings: `## Setup[^1]` is linked as `[[note#Setup]]`
   (click, hover, and preview navigation all reach the heading), and heading
   autocomplete offers `Setup` without the marker. Preview anchors are computed
@@ -31,6 +30,12 @@ this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - In the Markdown preview an unresolved `[[wiki-link]]` now keeps its original
   `[[...]]` text instead of collapsing to the bare label, so a broken reference
   is visible to the reader.
+
+### Documentation
+
+- A `samples/` handbook workspace in the repository: each page explains one
+  part of the wiki-link syntax and uses it live. Open it with the extension
+  installed, or via the `Run Extension (samples)` launch configuration.
 
 ## [1.0.1] - 2026-08-11
 
@@ -139,6 +144,7 @@ between Markdown files.
 - Renamed-to filenames containing `[` `]` `|` `#` or newlines are refused
   (they would break `[[...]]` syntax).
 
+[1.1.0]: https://github.com/ltvan/markdown-wiki-links/releases/tag/v1.1.0
 [1.0.1]: https://github.com/ltvan/markdown-wiki-links/releases/tag/v1.0.1
 [1.0.0]: https://github.com/ltvan/markdown-wiki-links/releases/tag/v1.0.0
 [0.2.0-preview.1]: https://github.com/ltvan/markdown-wiki-links/releases/tag/v0.2.0-preview.1
