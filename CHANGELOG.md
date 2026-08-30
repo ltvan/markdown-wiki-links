@@ -5,6 +5,15 @@ All notable changes to this extension are documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and
 this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- Go to Definition and Find All References for footnotes: `F12` on a `[^ref]`
+  reference (or Ctrl/Cmd-click its label) jumps to its definition, `F12` on the
+  definition's `[^ref]` jumps back to the references (Peek when there are
+  several), and `Shift+F12` lists every reference together with the definition.
+
 ## [1.1.0] - 2026-08-30
 
 ### Added

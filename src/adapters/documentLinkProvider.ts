@@ -9,6 +9,7 @@ import { lineForFragment } from '../core/blocks/sectionSlice';
 import { buildFenceMask } from '../core/fenceMask';
 
 import { IndexService } from './indexService';
+import { toRange } from './ranges';
 import { isInsideWorkspaceReal } from './workspaceBoundary';
 
 export class WikiDocumentLinkProvider implements vscode.DocumentLinkProvider {
@@ -32,9 +33,7 @@ export class WikiDocumentLinkProvider implements vscode.DocumentLinkProvider {
         const line = lineForFragment(r.fragment, targetText);
         if (line !== undefined) final = targetUri.with({ fragment: `L${line + 1}` });
       }
-      const start = doc.positionAt(r.range.start);
-      const end = doc.positionAt(r.range.end);
-      out.push(new vscode.DocumentLink(new vscode.Range(start, end), final));
+      out.push(new vscode.DocumentLink(toRange(doc, r.range), final));
     }
     return out;
   }

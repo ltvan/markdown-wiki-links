@@ -4,6 +4,8 @@ import { IndexService } from './adapters/indexService';
 import { WikiDocumentLinkProvider } from './adapters/documentLinkProvider';
 import { WikiHoverProvider } from './adapters/hoverProvider';
 import { FootnoteHoverProvider } from './adapters/footnoteHoverProvider';
+import { FootnoteDefinitionProvider } from './adapters/footnoteDefinitionProvider';
+import { FootnoteReferenceProvider } from './adapters/footnoteReferenceProvider';
 import { RenameHandler } from './adapters/renameHandler';
 import { createPreviewResolver } from './adapters/previewResolver';
 import { WikiDiagnostics } from './adapters/diagnostics';
@@ -37,6 +39,14 @@ export async function activate(context: vscode.ExtensionContext): Promise<WikiLi
       new WikiHoverProvider(indexService),
     ),
     vscode.languages.registerHoverProvider({ language: 'markdown' }, new FootnoteHoverProvider()),
+    vscode.languages.registerDefinitionProvider(
+      { language: 'markdown' },
+      new FootnoteDefinitionProvider(),
+    ),
+    vscode.languages.registerReferenceProvider(
+      { language: 'markdown' },
+      new FootnoteReferenceProvider(),
+    ),
     vscode.languages.registerCompletionItemProvider(
       { language: 'markdown' },
       new WikiCompletionProvider(indexService),

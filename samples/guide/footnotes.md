@@ -41,10 +41,12 @@ Type `[[footnotes#` and the completion list shows `Footnotes in headings` — th
 is stripped, so you never have to type it, and typing it would not work anyway (`[` and `]`
 cannot appear inside a wiki-link).
 
-## Hover to read a footnote
+## Hover to read a footnote, F12 to jump
 
 Hover any reference — try [^origin] above, or the `[^headings]` on the heading — and the
-definition appears in a hover card, without scrolling to the bottom of the page.
+definition appears in a hover card, without scrolling to the bottom of the page. Press `F12` on a
+reference (or Ctrl/Cmd-click its label) to jump to its definition, `F12` on the definition's
+`[^label]` to jump back to the references, and `Shift+F12` on either to list them all.
 
 ## In the preview
 

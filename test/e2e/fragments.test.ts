@@ -112,3 +112,72 @@ suite('Footnote hover (editor)', () => {
     assert.ok(!txt.includes('The footnote text.'), `unexpected hover: ${txt}`);
   });
 });
+
+suite('Footnote go-to-definition (F12)', () => {
+  const ws = (): vscode.Uri => vscode.workspace.workspaceFolders![0].uri;
+  const locationsAt = async (
+    doc: vscode.TextDocument,
+    offset: number,
+  ): Promise<vscode.Location[]> => {
+    const result = await vscode.commands.executeCommand<(vscode.Location | vscode.LocationLink)[]>(
+      'vscode.executeDefinitionProvider',
+      doc.uri,
+      doc.positionAt(offset),
+    );
+    return (result ?? []).map((l) =>
+      'targetUri' in l ? new vscode.Location(l.targetUri, l.targetRange) : l,
+    );
+  };
+
+  test('F12 on a [^1] reference goes to its definition line', async () => {
+    const doc = await vscode.workspace.openTextDocument(vscode.Uri.joinPath(ws(), 'target.md'));
+    const text = doc.getText();
+    const locs = await locationsAt(doc, text.indexOf('Footnoted[^1]') + 'Footnoted[^'.length);
+    const defLine = doc.positionAt(text.indexOf('[^1]: The footnote text.')).line;
+    assert.ok(
+      locs.some((l) => l.uri.fsPath === doc.uri.fsPath && l.range.start.line === defLine),
+      `expected a location on line ${defLine}, got ${locs.map((l) => l.range.start.line).join(', ')}`,
+    );
+  });
+
+  test('F12 on the definition goes back to the reference', async () => {
+    const doc = await vscode.workspace.openTextDocument(vscode.Uri.joinPath(ws(), 'target.md'));
+    const text = doc.getText();
+    const locs = await locationsAt(doc, text.indexOf('[^1]: The footnote text.') + 2);
+    // The fixture references [^1] twice — in the heading and in the body — so F12 offers both.
+    const headingLine = doc.positionAt(text.indexOf('Footnoted[^1]')).line;
+    const bodyLine = doc.positionAt(text.indexOf('here.[^1]')).line;
+    const lines = locs
+      .filter((l) => l.uri.fsPath === doc.uri.fsPath)
+      .map((l) => l.range.start.line)
+      .sort((a, b) => a - b);
+    assert.deepStrictEqual(lines, [headingLine, bodyLine]);
+  });
+
+  test('Find All References (Shift+F12) on a reference lists every reference and the definition', async () => {
+    const doc = await vscode.workspace.openTextDocument(vscode.Uri.joinPath(ws(), 'target.md'));
+    const text = doc.getText();
+    const refs = await vscode.commands.executeCommand<vscode.Location[]>(
+      'vscode.executeReferenceProvider',
+      doc.uri,
+      doc.positionAt(text.indexOf('here.[^1]') + 'here.[^'.length),
+    );
+    // VSCode's built-in Markdown extension also reports the [^1] usages (it sees a reference-
+    // style link with label "^1", ranged on the label) and the command concatenates providers'
+    // results, so compare the distinct lines rather than counting ranges. Only this extension
+    // knows the definition line, so dropping it would still fail the assertion.
+    const lines = [
+      ...new Set(
+        (refs ?? []).filter((l) => l.uri.fsPath === doc.uri.fsPath).map((l) => l.range.start.line),
+      ),
+    ].sort((a, b) => a - b);
+    const expected = [
+      text.indexOf('Footnoted[^1]'),
+      text.indexOf('here.[^1]'),
+      text.indexOf('[^1]: The footnote text.'),
+    ]
+      .map((o) => doc.positionAt(o).line)
+      .sort((a, b) => a - b);
+    assert.deepStrictEqual(lines, expected);
+  });
+});

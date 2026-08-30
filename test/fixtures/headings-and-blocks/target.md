@@ -15,6 +15,6 @@ Para A. ^para-a
 
 ## Footnoted[^1]
 
-Section with a footnote reference in its heading.
+Section with a footnote reference in its heading, cited again here.[^1]
 
 [^1]: The footnote text.

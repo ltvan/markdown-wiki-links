@@ -1,7 +1,13 @@
 import * as assert from 'assert';
 
 import { buildFenceMask } from '../../src/core/fenceMask';
-import { stripFootnoteRefs, extractFootnoteDefs, footnoteRefAt } from '../../src/core/footnote';
+import {
+  stripFootnoteRefs,
+  extractFootnoteDefs,
+  footnoteRefAt,
+  footnoteDefAt,
+  footnoteRefsFor,
+} from '../../src/core/footnote';
 
 suite('stripFootnoteRefs', () => {
   test('removes a trailing footnote reference', () => {
@@ -23,8 +29,11 @@ suite('stripFootnoteRefs', () => {
 
 suite('extractFootnoteDefs', () => {
   test('a one-line definition maps its label to the text and line', () => {
-    const defs = extractFootnoteDefs('Body.[^1]\n\n[^1]: The footnote text.\n');
-    assert.deepStrictEqual(defs.get('1'), { line: 2, text: 'The footnote text.' });
+    const text = 'Body.[^1]\n\n[^1]: The footnote text.\n';
+    const def = extractFootnoteDefs(text).get('1');
+    assert.strictEqual(def?.line, 2);
+    assert.strictEqual(def?.text, 'The footnote text.');
+    assert.strictEqual(text.slice(def!.range.start, def!.range.end), '[^1]');
   });
   test('indented continuation lines belong to the definition, dedented', () => {
     const text = '[^a]: First line.\n    Second line.\n\n    Third paragraph.\n\nNot part of it.';
@@ -57,8 +66,11 @@ suite('extractFootnoteDefs', () => {
       '[^2]: in code',
       '```',
     ];
-    const defs = extractFootnoteDefs(lines.join('\r\n'));
-    assert.deepStrictEqual(defs.get('1'), { line: 6, text: 'The note.' });
+    const text = lines.join('\r\n');
+    const defs = extractFootnoteDefs(text);
+    assert.strictEqual(defs.get('1')?.line, 6);
+    assert.strictEqual(defs.get('1')?.text, 'The note.');
+    assert.strictEqual(text.slice(defs.get('1')!.range.start, defs.get('1')!.range.end), '[^1]');
     assert.strictEqual(defs.get('2'), undefined);
   });
   test('lazy continuation stops at a block start: list, quote, thematic break, html', () => {
@@ -102,5 +114,65 @@ suite('footnoteRefAt', () => {
   });
   test('references inside code are ignored', () => {
     assert.strictEqual(footnoteRefAt('`[^1]`', 2), undefined);
+  });
+});
+
+suite('footnoteDefAt', () => {
+  const text = 'See[^a] and [^a] again.\n\n[^a]: The note.\n[^b]: Other.';
+  test('returns the definition whose [^label] contains the offset, with the label range', () => {
+    const at = text.indexOf('[^a]: The note.');
+    const def = footnoteDefAt(text, at + 1);
+    assert.strictEqual(def?.line, 2);
+    assert.strictEqual(def?.label, 'a');
+    assert.strictEqual(text.slice(def!.range.start, def!.range.end), '[^a]');
+  });
+  test('only the [^label] token counts — the footnote body belongs to other providers', () => {
+    assert.strictEqual(footnoteDefAt(text, text.indexOf('The note.') + 3), undefined);
+    const withLink = '[^1]: see [Setup](#setup) here';
+    assert.strictEqual(footnoteDefAt(withLink, withLink.indexOf('#setup')), undefined);
+    assert.strictEqual(footnoteDefAt(withLink, 0)?.label, '1');
+    assert.strictEqual(footnoteDefAt(withLink, 4)?.label, '1'); // just after "]", like refs
+    assert.strictEqual(footnoteDefAt(withLink, 5), undefined);
+  });
+  test('a reference is not a definition', () => {
+    assert.strictEqual(footnoteDefAt(text, 4), undefined);
+  });
+  test('definitions inside fenced code are ignored', () => {
+    assert.strictEqual(footnoteDefAt('```\n[^x]: no\n```', 6), undefined);
+  });
+  test('a later definition is found past earlier ones', () => {
+    const at = text.indexOf('[^b]: Other.') + 2;
+    assert.strictEqual(footnoteDefAt(text, at)?.label, 'b');
+    assert.strictEqual(footnoteDefAt(text, at)?.text, 'Other.');
+  });
+  test('duplicate labels: the map keeps the last definition, the token lookup finds each', () => {
+    const dup = 'x[^d]\n\n[^d]: first\n\n[^d]: second';
+    assert.strictEqual(extractFootnoteDefs(dup).get('d')?.text, 'second');
+    assert.strictEqual(footnoteDefAt(dup, dup.indexOf('[^d]: first') + 1)?.text, 'first');
+    assert.strictEqual(footnoteDefAt(dup, dup.indexOf('[^d]: second') + 1)?.text, 'second');
+  });
+  test('CRLF line endings and up to three spaces of indent keep the token range exact', () => {
+    const text = 'see[^a]\r\n\r\n   [^a]: note\r\n';
+    const def = footnoteDefAt(text, text.indexOf('[^a]:') + 2);
+    assert.strictEqual(def?.label, 'a');
+    assert.strictEqual(text.slice(def!.range.start, def!.range.end), '[^a]');
+  });
+});
+
+suite('footnoteRefsFor', () => {
+  const text = 'See[^a] and [^a] again, plus [^b].\n\n[^a]: The note.';
+  test('lists every reference to the label in document order, excluding the definition', () => {
+    const refs = footnoteRefsFor(text, 'a');
+    assert.deepStrictEqual(
+      refs.map((r) => text.slice(r.range.start, r.range.end)),
+      ['[^a]', '[^a]'],
+    );
+    assert.ok(refs.every((r) => r.range.start < text.indexOf('[^a]: The note.')));
+  });
+  test('an unreferenced label yields no references', () => {
+    assert.deepStrictEqual(footnoteRefsFor(text, 'zzz'), []);
+  });
+  test('references inside code are ignored', () => {
+    assert.strictEqual(footnoteRefsFor('`[^a]` [^a]', 'a').length, 1);
   });
 });

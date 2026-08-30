@@ -7,6 +7,7 @@ import { innerRange } from '../core/parser/refRange';
 import { resolveTarget } from '../core/resolver/resolveTarget';
 
 import { IndexService } from './indexService';
+import { toRange } from './ranges';
 
 // Edits fire onDidChangeTextDocument per keystroke; coalesce re-decoration to one pass per
 // idle window so a large document is not re-scanned on every character.
@@ -65,7 +66,7 @@ export class WikiDecorations {
     const unresolvedRanges: vscode.Range[] = [];
     for (const ref of refs) {
       const inner = innerRange(ref);
-      const range = new vscode.Range(doc.positionAt(inner.start), doc.positionAt(inner.end));
+      const range = toRange(doc, inner);
       const bucket = resolveTarget(ref, doc.uri.fsPath, snap) ? resolvedRanges : unresolvedRanges;
       bucket.push(range);
     }
