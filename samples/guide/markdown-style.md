@@ -93,6 +93,11 @@ Store images beside the notes that use them (here, in `media/`) and embed them b
 
 ![[link-flow.png|320]]
 
+## Footnotes
+
+Footnote references (`[^1]`) may appear anywhere, headings included; links and completion ignore
+them. See [[footnotes]] for the details.
+
 ## Links
 
 - Link the first mention of a term, not every mention.
@@ -102,3 +107,5 @@ Store images beside the notes that use them (here, in `media/`) and embed them b
   [[team/meeting-notes|the team sync]] instead.
 
 Regular Markdown links work alongside wiki-links — back to the [start page](../README.md).
+
+Next: [[footnotes]].

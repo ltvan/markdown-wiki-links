@@ -5,3 +5,4 @@
 - [[#Top]]
 
 # Top
+- [[target#Footnoted]]

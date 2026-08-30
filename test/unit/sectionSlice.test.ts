@@ -15,6 +15,13 @@ suite('sectionSlice (logic paths)', () => {
   test('lineForFragment finds a block-id (caret prefix)', () => {
     assert.strictEqual(lineForFragment('^para-a', sample), 5);
   });
+  test('lineForFragment matches a footnoted heading by its footnote-free text', () => {
+    assert.strictEqual(lineForFragment('Setup', '# Top\n\n## Setup[^1]\n\nbody'), 2);
+  });
+  test('sliceSection matches a footnoted heading by its footnote-free text', () => {
+    const out = sliceSection('Setup', '## Setup[^1]\n\nbody\n\n## Next');
+    assert.strictEqual(out, '## Setup[^1]\n\nbody\n');
+  });
   test('lineForFragment returns undefined for an unknown fragment', () => {
     assert.strictEqual(lineForFragment('Nope', sample), undefined);
   });

@@ -12,3 +12,9 @@ Para A. ^para-a
 > quoted line
 
 ^quote-id
+
+## Footnoted[^1]
+
+Section with a footnote reference in its heading.
+
+[^1]: The footnote text.

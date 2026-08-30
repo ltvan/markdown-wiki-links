@@ -29,6 +29,11 @@ names a block ID.
 A caret and an identifier (`^intro`) that marks one paragraph, list, or quote as a link target.
 See [[block-ids]].
 
+## Footnote[^fn]
+
+A reference (`[^label]`) to a note defined elsewhere in the file as `[^label]: text`. A heading may
+carry one; wiki-links and completion use the heading name without it. See [[footnotes]].
+
 ## Resolution
 
 The process of turning a link's text into a file. Bare names resolve by uniqueness and closeness;
@@ -45,3 +50,5 @@ Link to the smallest thing that answers the reader's question — a block over a
 - Keep one topic per file.
 
 ^rules-list
+
+[^fn]: This heading carries a footnote reference on purpose — link to it as `[[glossary#Footnote]]`.

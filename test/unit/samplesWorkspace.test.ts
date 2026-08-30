@@ -10,7 +10,7 @@ import {
 import { parseLinks } from '../../src/core/parser/linkParser';
 import { parseEmbeds } from '../../src/core/parser/embedParser';
 import { lineForFragment } from '../../src/core/blocks/sectionSlice';
-import { buildFenceMask } from '../../src/core/fenceMask';
+import { buildFenceMask, isMasked } from '../../src/core/fenceMask';
 import { isExcludedPath } from '../../src/core/pathFilter';
 
 // The samples/ handbook is documentation that must stay correct as the resolver evolves, and
@@ -109,6 +109,29 @@ suite('samples/ handbook links', () => {
       'fixtures not indexed',
     );
     assert.deepStrictEqual(checkSamples(repoRoot, indexed), []);
+  });
+
+  test('every [[ outside code starts a parsed wiki-link (no link broken across lines)', () => {
+    // A [[...|display]] wrapped across a line break is not a wiki-link at all — it silently
+    // disappears from the link sweep above, so guard the class here.
+    const unparsed: string[] = [];
+    for (const file of walk(samplesDir).filter((f) => /\.md$/i.test(f))) {
+      const text = fs.readFileSync(file, 'utf8');
+      const rel = path.relative(samplesDir, file).split(path.sep).join('/');
+      const mask = buildFenceMask(text);
+      const starts = new Set(
+        [...parseLinks(text, mask), ...parseEmbeds(text, mask)].map((r) =>
+          r.kind === 'embed' ? r.range.start + 1 : r.range.start,
+        ),
+      );
+      for (const m of text.matchAll(/\[\[/g)) {
+        const at = m.index ?? 0;
+        if (isMasked(mask, at) || starts.has(at)) continue;
+        const line = text.slice(0, at).split('\n').length;
+        unparsed.push(`${rel}:${line}`);
+      }
+    }
+    assert.deepStrictEqual(unparsed, []);
   });
 
   test('the intentional demo failures are all present in the handbook', () => {

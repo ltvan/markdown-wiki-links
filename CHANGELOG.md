@@ -16,6 +16,12 @@ this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
   Unopened files are read as UTF-8. Scan results persist until the next scan or
   the file is deleted or renamed; live diagnostics for open files are unchanged.
 
+- Footnote references in headings: `## Setup[^1]` is linked as `[[note#Setup]]`
+  (click, hover, and preview navigation all reach the heading), and heading
+  autocomplete offers `Setup` without the marker. Preview anchors are computed
+  with the preview's own Markdown engine, so navigation works both with and
+  without a footnote extension such as `bierner.markdown-footnotes`.
+
 ### Changed
 
 - In the Markdown preview an unresolved `[[wiki-link]]` now keeps its original

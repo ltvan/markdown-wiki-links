@@ -9,6 +9,11 @@ suite('rankFragmentCompletions (contract)', () => {
     assert.deepStrictEqual(labels, ['Top', 'Intro', 'Details']);
   });
 
+  test('a footnoted heading is offered without its footnote reference', () => {
+    const [c] = rankFragmentCompletions('## Setup[^1]\n\n[^1]: The footnote.');
+    assert.strictEqual(c.label, 'Setup');
+    assert.strictEqual(c.insertText, 'Setup');
+  });
   test('block ids appear as ^id candidates', () => {
     const text = '# Top\n\nA paragraph. ^para-a';
     const cands = rankFragmentCompletions(text);

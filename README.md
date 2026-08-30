@@ -17,6 +17,11 @@ Use `[[wiki-link]]` for markdown and media files within the workspace only.
 [[#Heading in same file]]              Same-file heading link
 ```
 
+A heading may carry footnote references; link to it without them. `## Setup[^1]` is reached as
+`[[file name#Setup]]` and autocomplete offers `Setup`. Preview navigation lands on the heading
+whether or not a footnote extension (such as `bierner.markdown-footnotes`) is installed — the
+anchor is computed with the same Markdown engine the preview renders with.
+
 Define a block ID by appending `^block-id` to any paragraph:
 
 ```markdown

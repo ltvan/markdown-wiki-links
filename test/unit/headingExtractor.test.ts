@@ -27,6 +27,11 @@ suite('headingExtractor', () => {
       ],
     );
   });
+  test('a footnote reference is stripped from the heading text and slug', () => {
+    const [h] = extractHeadings('## Setup[^1]');
+    assert.strictEqual(h.text, 'Setup');
+    assert.strictEqual(h.slug, 'setup');
+  });
   test('skips headings inside fences', () => {
     const text = '# real\n```\n# fake\n```';
     assert.strictEqual(extractHeadings(text).length, 1);

@@ -24,6 +24,7 @@ Then open any page below, hover a link, click it, and open the Markdown preview
 3. [[embeds|Embeds]] — pulling another note, section, or image inline.
 4. [[resolution|How links resolve]] — bare vs. slashed targets, ambiguity, broken links.
 5. [[markdown-style|Markdown writing guideline]] — house style for readable notes.
+6. [[footnotes|Footnotes]] — footnote references, including inside headings you link to.
 
 Reference notes used by the guide pages:
 

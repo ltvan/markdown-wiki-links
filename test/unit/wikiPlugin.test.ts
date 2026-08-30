@@ -1,7 +1,9 @@
 import * as assert from 'assert';
 
 import MarkdownIt from 'markdown-it';
+import footnote from 'markdown-it-footnote';
 
+import { lineForFragment } from '../../src/core/blocks/sectionSlice';
 import { wikiPlugin, WikiResolver } from '../../src/markdownItPlugin/wikiRule';
 
 // A resolver where embeds resolve a small fixed set and links resolve to "<target>.md".
@@ -261,5 +263,38 @@ suite('wikiPlugin — links', () => {
       /<a [^>]*href="Link\.md"/.test(out),
       `[[Link]] after an embed must still be rewritten; got: ${out}`,
     );
+  });
+});
+
+suite('wikiPlugin — heading anchors (with and without a footnote plugin)', () => {
+  const target = '# Top\n\n## Setup[^1]\n\nbody\n\n[^1]: The footnote.\n';
+  const env = { currentDocument: 'x' };
+  // A resolver that mimics the adapter: cross-file links ask the plugin for the target's
+  // anchors (it owns the markdown-it instance) and append the one for the matched heading.
+  const res: WikiResolver = {
+    resolveEmbed: () => null,
+    resolveLink: (_from, t, fragment, anchorsOf) => {
+      if (t !== 'note') return null;
+      const line = fragment ? lineForFragment(fragment, target) : undefined;
+      const anchor = line === undefined ? undefined : anchorsOf(target).get(line);
+      return anchor ? `note.md#${anchor}` : 'note.md';
+    },
+  };
+
+  test('same-file [[#Setup]] uses the anchor of the previewed text — footnote marker as text', () => {
+    const md = new MarkdownIt({ html: true }).use(wikiPlugin, { resolver: res });
+    const out = md.render(target + '\n[[#Setup]]', env);
+    assert.ok(out.includes('href="#setup1"'), out);
+  });
+  test('same-file [[#Setup]] with markdown-it-footnote loaded points at the clean id', () => {
+    const md = new MarkdownIt({ html: true }).use(footnote).use(wikiPlugin, { resolver: res });
+    const out = md.render(target + '\n[[#Setup]]', env);
+    assert.ok(out.includes('href="#setup"'), out);
+  });
+  test('cross-file [[note#Setup]] gets the target anchor from the live instance', () => {
+    const plain = new MarkdownIt({ html: true }).use(wikiPlugin, { resolver: res });
+    assert.ok(plain.render('[[note#Setup]]', env).includes('href="note.md#setup1"'));
+    const fn = new MarkdownIt({ html: true }).use(footnote).use(wikiPlugin, { resolver: res });
+    assert.ok(fn.render('[[note#Setup]]', env).includes('href="note.md#setup"'));
   });
 });
