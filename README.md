@@ -90,7 +90,7 @@ in VSCode with the extension installed, or press `F5` in this repository and cho
 
 ## Development
 
-Requires Node.js and pnpm.
+Requires Node.js ≥ 22.13 and pnpm. The pnpm version is pinned in `package.json` (`devEngines.packageManager`); any pnpm 11 you have installed downloads and runs the pinned version automatically inside this repository, and `npm` commands are refused by design — use pnpm.
 
 ```sh
 pnpm install        # install dependencies

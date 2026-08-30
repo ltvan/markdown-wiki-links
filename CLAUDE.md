@@ -10,7 +10,7 @@ Scope is **workspace-local Markdown/media only** — wiki-links must not resolve
 
 ## Tech stack & commands
 
-TypeScript, pnpm, esbuild bundling, `@vscode/test-cli` + `@vscode/test-electron` (Mocha) for tests.
+TypeScript, pnpm, esbuild bundling, `@vscode/test-cli` + `@vscode/test-electron` (Mocha) for tests. pnpm's own version is pinned via `devEngines.packageManager` in `package.json` — pnpm 11 records that pin (with integrities) as the `packageManagerDependencies` section at the top of `pnpm-lock.yaml`, which Dependabot audits, and a different installed pnpm 11 auto-switches to it. To bump pnpm: change `devEngines.packageManager.version`, run `pnpm install` (the lockfile section regenerates), commit both. The legacy `packageManager` field does **not** update that section in pnpm 11.
 
 - `pnpm build` — bundle the extension and the markdown-it plugin into `dist/` via esbuild
 - `pnpm compile:tests` — `tsc` compiles `src/` + `test/` into `out/`
