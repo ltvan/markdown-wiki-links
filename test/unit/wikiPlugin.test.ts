@@ -173,9 +173,14 @@ suite('wikiPlugin — links', () => {
     assert.ok(/>Display<\/a>/.test(out), `got: ${out}`);
     assert.ok(out.includes('href="foo.md"'));
   });
-  test('unresolved [[ghost]] renders as plain text, not a link', () => {
+  test('unresolved [[ghost]] keeps its original text, not a link', () => {
     const out = mk(resolver()).render('[[ghost]]');
-    assert.ok(out.includes('ghost'));
+    assert.ok(out.includes('[[ghost]]'), `expected the source text verbatim: ${out}`);
+    assert.ok(!/<a /.test(out), `should not be a link: ${out}`);
+  });
+  test('unresolved link with display text and fragment keeps the whole original text', () => {
+    const out = mk(resolver()).render('[[ghost#Heading|Shown]]');
+    assert.ok(out.includes('[[ghost#Heading|Shown]]'), `expected the source text verbatim: ${out}`);
     assert.ok(!/<a /.test(out), `should not be a link: ${out}`);
   });
   test('embeds are not also rewritten as links', () => {

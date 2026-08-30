@@ -16,6 +16,12 @@ this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
   Unopened files are read as UTF-8. Scan results persist until the next scan or
   the file is deleted or renamed; live diagnostics for open files are unchanged.
 
+### Changed
+
+- In the Markdown preview an unresolved `[[wiki-link]]` now keeps its original
+  `[[...]]` text instead of collapsing to the bare label, so a broken reference
+  is visible to the reader.
+
 ## [1.0.1] - 2026-08-11
 
 ### Fixed

@@ -145,13 +145,15 @@ function rewriteLinks(
   fromFsPath: string,
   mask: FenceMask,
 ): string {
-  return src.replace(LINK_RE, (_full, target, fragment, display, offset: number) => {
-    if (isMasked(mask, offset)) return _full;
+  return src.replace(LINK_RE, (full: string, target, fragment, display, offset: number) => {
+    if (isMasked(mask, offset)) return full;
     const t = (target as string).trim();
     const frag = (fragment as string | undefined)?.trim();
     const label = (display as string | undefined)?.trim() ?? labelFor(t, frag);
     const href = resolver.resolveLink(fromFsPath, t, frag);
-    if (!href) return mdEscape(label); // unresolved → plain text, no link
+    // Unresolved → the original [[...]] text, escaped so markdown-it renders it literally
+    // (and never as a reference-style link). Keeps the broken reference visible to the reader.
+    if (!href) return mdEscape(full);
     return `[${mdEscape(label)}](<${href}>)`;
   });
 }
