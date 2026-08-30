@@ -5,6 +5,17 @@ All notable changes to this extension are documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and
 this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- `Wiki Links: Scan Workspace for Broken Links` command: checks every Markdown
+  file in the workspace — open or not — and lists each unresolved or ambiguous
+  wiki-link in the Problems pane, with a progress notification and a summary
+  whose **Show Problems** button opens the pane.
+  Unopened files are read as UTF-8. Scan results persist until the next scan or
+  the file is deleted or renamed; live diagnostics for open files are unchanged.
+
 ## [1.0.1] - 2026-08-11
 
 ### Fixed

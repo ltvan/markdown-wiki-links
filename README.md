@@ -50,11 +50,20 @@ Prefix any wikilink with `!` to embed its content inline:
 - Auto update links when renaming or moving files (Markdown and media targets alike) — moving or renaming a whole folder updates links to every file inside it. Rewriting is resolution-verified: a link is rewritten exactly when its resolution would change, so links inside moved files are re-anchored to keep their targets, links threatened by an incoming name collision are pinned, and links that still resolve (including `[[Case]]`/`[[name.md]]` variants) are left untouched.
 - Both `[[...]]` links and `![[...]]` embeds rendered in the Markdown preview — links are navigable, embeds expand inline with cycle protection; occurrences inside backtick code spans or fenced code blocks are left as-is.
 - Resolved wiki-links are colored in the editor; unresolved ones are dimmed — based on real resolution, so spaces and Unicode in names color correctly.
-- Diagnostics flag broken or ambiguous wiki-links.
+- Diagnostics flag broken or ambiguous wiki-links in open files; **Wiki Links: Scan Workspace for Broken Links** checks every Markdown file in the workspace and lists all of them in the Problems pane.
 - Support both unique file name and relative file name resolution:
   - A bare `[[file name]]` resolves by unique base name across the workspace. If the name is ambiguous, a file directly under the workspace root wins; otherwise resolution walks up from the current file to the closest parent folder containing a match.
   - A relative `[[folder1/folder2/file name]]` resolves to the unique file whose path ends with `folder1/folder2/file name.md` (or `.markdown`). If more than one file matches, the link is left unresolved.
   - `..` segments and absolute paths are not allowed — links never resolve outside the workspace.
+
+## Commands
+
+Run these from the Command Palette (`Ctrl+Shift+P` / `Cmd+Shift+P`):
+
+| Command                                       | What it does                                                                                                                                                                                                                                                                                                                                                           |
+| --------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Wiki Links: Scan Workspace for Broken Links` | Reads every Markdown file in every workspace folder (open or not, honoring `wikiLinks.index.excludeFolders`), reports each unresolved or ambiguous wiki-link in the Problems pane, and shows a summary notification with a **Show Problems** button. Unopened files are read as UTF-8. Results stay in the pane until the next scan or the file is deleted or renamed. |
+| `Wiki Links: Rebuild Index`                   | Re-scans the workspace for link targets. Use it if links stop resolving after large external changes.                                                                                                                                                                                                                                                                  |
 
 ## Try it
 

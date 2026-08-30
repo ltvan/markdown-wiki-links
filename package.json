@@ -61,6 +61,10 @@
       {
         "command": "wikiLinks.rebuildIndex",
         "title": "Wiki Links: Rebuild Index"
+      },
+      {
+        "command": "wikiLinks.scanWorkspace",
+        "title": "Wiki Links: Scan Workspace for Broken Links"
       }
     ],
     "configuration": {

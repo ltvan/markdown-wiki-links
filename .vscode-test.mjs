@@ -13,7 +13,7 @@ export default defineConfig([
   },
   {
     label: 'ambiguous',
-    files: 'out/test/e2e/{ambiguous,diagnostics,completionDescription}.test.js',
+    files: 'out/test/e2e/{ambiguous,diagnostics,completionDescription,scanWorkspace}.test.js',
     workspaceFolder: 'test/fixtures/ambiguous-names',
     launchArgs,
     mocha: { ui: 'tdd', timeout: 20000 },
