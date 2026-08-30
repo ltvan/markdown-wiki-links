@@ -57,6 +57,12 @@
   },
   "contributes": {
     "markdown.markdownItPlugins": true,
+    "markdown.previewScripts": [
+      "./dist/previewScript/footnoteHover.js"
+    ],
+    "markdown.previewStyles": [
+      "./media/footnoteHover.css"
+    ],
     "commands": [
       {
         "command": "wikiLinks.rebuildIndex",

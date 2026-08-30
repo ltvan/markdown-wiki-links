@@ -62,6 +62,33 @@ export default [
     },
   },
   {
+    files: ['src/previewScript/**/*.ts'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: [
+                'vscode',
+                'fs',
+                'fs/*',
+                'path',
+                'node:*',
+                'markdown-it',
+                '../adapters/*',
+                '../../adapters/*',
+                '../markdownItPlugin/*',
+                '../../markdownItPlugin/*',
+              ],
+              message: 'previewScript runs in the preview webview: browser APIs and src/core only',
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
     files: ['test/e2e/**/*.ts'],
     rules: {
       'no-restricted-imports': [

@@ -41,6 +41,11 @@ Type `[[footnotes#` and the completion list shows `Footnotes in headings` — th
 is stripped, so you never have to type it, and typing it would not work anyway (`[` and `]`
 cannot appear inside a wiki-link).
 
+## Hover to read a footnote
+
+Hover any reference — try [^origin] above, or the `[^headings]` on the heading — and the
+definition appears in a hover card, without scrolling to the bottom of the page.
+
 ## In the preview
 
 Open the preview (`Ctrl+Shift+V` / `Cmd+Shift+V`). VSCode's built-in preview shows footnote
@@ -48,6 +53,8 @@ markers as literal text; a footnote extension such as `bierner.markdown-footnote
 as superscript links with the definitions listed at the end of the page. The heading links above
 jump to the right heading in **both** cases: the extension computes the preview's heading anchor
 with the same Markdown engine the preview uses, so it follows whatever plugins are installed.
+With a footnote extension installed, hovering a rendered footnote number in the preview shows
+the footnote body in a card as well.
 
 Next: back to the [[link-syntax|link syntax]] page, or the [start page](../README.md).
 

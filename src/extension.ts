@@ -3,6 +3,7 @@ import * as vscode from 'vscode';
 import { IndexService } from './adapters/indexService';
 import { WikiDocumentLinkProvider } from './adapters/documentLinkProvider';
 import { WikiHoverProvider } from './adapters/hoverProvider';
+import { FootnoteHoverProvider } from './adapters/footnoteHoverProvider';
 import { RenameHandler } from './adapters/renameHandler';
 import { createPreviewResolver } from './adapters/previewResolver';
 import { WikiDiagnostics } from './adapters/diagnostics';
@@ -35,6 +36,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<WikiLi
       { language: 'markdown' },
       new WikiHoverProvider(indexService),
     ),
+    vscode.languages.registerHoverProvider({ language: 'markdown' }, new FootnoteHoverProvider()),
     vscode.languages.registerCompletionItemProvider(
       { language: 'markdown' },
       new WikiCompletionProvider(indexService),

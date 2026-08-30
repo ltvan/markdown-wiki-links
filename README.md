@@ -20,7 +20,9 @@ Use `[[wiki-link]]` for markdown and media files within the workspace only.
 A heading may carry footnote references; link to it without them. `## Setup[^1]` is reached as
 `[[file name#Setup]]` and autocomplete offers `Setup`. Preview navigation lands on the heading
 whether or not a footnote extension (such as `bierner.markdown-footnotes`) is installed — the
-anchor is computed with the same Markdown engine the preview renders with.
+anchor is computed with the same Markdown engine the preview renders with. Hover a footnote
+reference to read its definition — in the editor always, and in the preview whenever a footnote
+extension has rendered the footnotes.
 
 Define a block ID by appending `^block-id` to any paragraph:
 
@@ -50,7 +52,7 @@ Prefix any wikilink with `!` to embed its content inline:
 
 - Support `.md` and `.markdown` file extensions.
 - Click to follow the link (headings and block IDs jump to the right line).
-- Hover to preview the linked file or section; hovering an image embed previews the image.
+- Hover to preview the linked file or section; hovering an image embed previews the image. Hovering a footnote reference `[^1]` shows its definition; the same hover card appears in the Markdown preview when a footnote extension (such as `bierner.markdown-footnotes`) renders footnotes.
 - Autocomplete file names while typing `[[` or `![[`, ranked by closest folder. After `#`, autocomplete switches to the target file's headings and block IDs (and the current file's, for `[[#`), shown in document order with the heading level (H1, H2, …) beside each entry.
 - Auto update links when renaming or moving files (Markdown and media targets alike) — moving or renaming a whole folder updates links to every file inside it. Rewriting is resolution-verified: a link is rewritten exactly when its resolution would change, so links inside moved files are re-anchored to keep their targets, links threatened by an incoming name collision are pinned, and links that still resolve (including `[[Case]]`/`[[name.md]]` variants) are left untouched.
 - Both `[[...]]` links and `![[...]]` embeds rendered in the Markdown preview — links are navigable, embeds expand inline with cycle protection; an unresolved link is shown as its original `[[...]]` text so the broken reference stays visible; occurrences inside backtick code spans or fenced code blocks are left as-is.

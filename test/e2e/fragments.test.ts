@@ -76,3 +76,39 @@ suite('Fragments — footnotes in headings', () => {
     }
   });
 });
+
+suite('Footnote hover (editor)', () => {
+  const ws = (): vscode.Uri => vscode.workspace.workspaceFolders![0].uri;
+
+  test('hovering a [^1] reference shows the footnote text', async () => {
+    const doc = await vscode.workspace.openTextDocument(vscode.Uri.joinPath(ws(), 'target.md'));
+    const offset = doc.getText().indexOf('Footnoted[^1]') + 'Footnoted[^'.length;
+    const hovers = await vscode.commands.executeCommand<vscode.Hover[]>(
+      'vscode.executeHoverProvider',
+      doc.uri,
+      doc.positionAt(offset),
+    );
+    const txt = hovers
+      .flatMap((h) =>
+        h.contents.map((c) => (typeof c === 'string' ? c : (c as vscode.MarkdownString).value)),
+      )
+      .join('\n');
+    assert.ok(txt.includes('The footnote text.'), `hover was: ${txt}`);
+  });
+
+  test('hovering the definition line itself shows nothing from the footnote provider', async () => {
+    const doc = await vscode.workspace.openTextDocument(vscode.Uri.joinPath(ws(), 'target.md'));
+    const offset = doc.getText().indexOf('[^1]: The footnote text.') + 2;
+    const hovers = await vscode.commands.executeCommand<vscode.Hover[]>(
+      'vscode.executeHoverProvider',
+      doc.uri,
+      doc.positionAt(offset),
+    );
+    const txt = hovers
+      .flatMap((h) =>
+        h.contents.map((c) => (typeof c === 'string' ? c : (c as vscode.MarkdownString).value)),
+      )
+      .join('\n');
+    assert.ok(!txt.includes('The footnote text.'), `unexpected hover: ${txt}`);
+  });
+});

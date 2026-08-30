@@ -18,6 +18,17 @@ const ctxs = await Promise.all([
     entryPoints: ['src/markdownItPlugin/index.ts'],
     outfile: 'dist/markdownItPlugin.js',
   }),
+  // Runs inside the Markdown preview webview (contributes.markdown.previewScripts): a browser
+  // IIFE, no Node, no vscode.
+  esbuild.context({
+    ...common,
+    platform: 'browser',
+    target: 'es2022',
+    format: 'iife',
+    external: [],
+    entryPoints: ['src/previewScript/footnoteHover.ts'],
+    outfile: 'dist/previewScript/footnoteHover.js',
+  }),
 ]);
 
 if (watch) {

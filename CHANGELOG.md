@@ -21,6 +21,10 @@ this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
   autocomplete offers `Setup` without the marker. Preview anchors are computed
   with the preview's own Markdown engine, so navigation works both with and
   without a footnote extension such as `bierner.markdown-footnotes`.
+- Footnote hover: hovering a `[^ref]` reference in the editor shows its
+  definition from the same file. In the Markdown preview, a hover card shows the
+  footnote body whenever a footnote extension (such as
+  `bierner.markdown-footnotes`) has rendered the footnotes.
 
 ### Changed
 
