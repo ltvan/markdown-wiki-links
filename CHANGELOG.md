@@ -14,6 +14,15 @@ this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
   definition's `[^ref]` jumps back to the references (Peek when there are
   several), and `Shift+F12` lists every reference together with the definition.
 
+### Fixed
+
+- Paired brackets in a heading or display text are now plain text, as in
+  regular Markdown links: `[[note#Edge cases [brackets]]]` works as written.
+  Heading autocomplete inserts the heading text as-is when a link can hold it;
+  a heading containing `|` or unpaired brackets is inserted as its slug
+  (`## Options | Flags` → `#options--flags`), which resolves like any other
+  heading link.
+
 ## [1.1.0] - 2026-08-30
 
 ### Added

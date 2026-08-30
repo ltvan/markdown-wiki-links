@@ -298,3 +298,20 @@ suite('wikiPlugin — heading anchors (with and without a footnote plugin)', () 
     assert.ok(fn.render('[[note#Setup]]', env).includes('href="note.md#setup"'));
   });
 });
+
+suite('wikiPlugin — brackets inside fragments', () => {
+  const env = { currentDocument: 'x' };
+  const res: WikiResolver = {
+    resolveEmbed: () => null,
+    resolveLink: (_f, t, frag) => (t === 'note' ? `note.md#${frag}` : null),
+  };
+  test('[[note#Edge cases [brackets]]] becomes one link with the full fragment', () => {
+    const md = new MarkdownIt({ html: true }).use(wikiPlugin, { resolver: res });
+    const out = md.render('[[note#Edge cases [brackets]]]', env);
+    assert.ok(/<a /.test(out), out);
+    // markdown-it percent-encodes the destination; decode before comparing.
+    const href = /href="([^"]+)"/.exec(out);
+    assert.strictEqual(decodeURIComponent(href![1]), 'note.md#Edge cases [brackets]');
+    assert.ok(out.includes('Edge cases [brackets]</a>'), out);
+  });
+});

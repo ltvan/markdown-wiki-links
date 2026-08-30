@@ -38,6 +38,16 @@ Add `#` and the heading text to land on a section instead of the top of the file
 Type `[[glossary#` and the completion list switches from file names to that file's headings, in
 document order, with the level (H1, H2, …) shown next to each.
 
+A paired `[...]` in a heading is plain text, as in regular Markdown links — the heading below is
+reached as [[#Edge cases [brackets]]], written exactly as it reads. Only `|` (it starts display
+text) and unpaired or nested brackets cannot appear in a link; autocomplete inserts such headings
+as their
+slug instead.
+
+### Edge cases [brackets]
+
+Square brackets in a heading are fine for readers and for links alike.
+
 ## 4. Link to a block
 
 Add `#^` and a block ID to land on a single paragraph, list, or quote. The target file has to

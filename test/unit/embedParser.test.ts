@@ -18,6 +18,10 @@ suite('embedParser', () => {
     assert.strictEqual(r.sizeHint, '300');
     assert.strictEqual(r.display, undefined);
   });
+  test('a paired [..] inside an embed fragment is plain text', () => {
+    const [ref] = parseEmbeds('![[note#Edge cases [brackets]]]');
+    assert.strictEqual(ref.fragment, 'Edge cases [brackets]');
+  });
   test('does not match plain [[link]]', () => {
     assert.strictEqual(parseEmbeds('[[note]]').length, 0);
   });

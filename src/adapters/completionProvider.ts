@@ -11,7 +11,9 @@ import { isInsideWorkspaceReal } from './workspaceBoundary';
 
 // Splits "[[target#partial" / "![[target#partial" / "[[#partial" — target and fragment are
 // captured separately. Matches up to the cursor; only used when at least one `#` is present.
-const FRAGMENT_RE = /!?\[\[([^[\]\r\n|#]*)#([^[\]\r\n|]*)$/;
+// The partial fragment may contain paired [..] (plain text, like the parser) and may end in
+// an unclosed "[" the user is still typing; the whole partial is what completion replaces.
+const FRAGMENT_RE = /!?\[\[([^[\]\r\n|#]*)#((?:[^[\]\r\n|]|\[[^[\]\r\n|]*\])*(?:\[[^[\]\r\n|]*)?)$/;
 
 // File-name completion context: cursor inside [[...] with no `#` yet typed on this side.
 const FILE_RE = /!?\[\[([^[\]\r\n]*)$/;

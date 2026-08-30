@@ -1,5 +1,6 @@
 import { extractHeadings } from '../blocks/headingExtractor';
 import { extractBlockIds } from '../blocks/blockIdExtractor';
+import { Heading } from '../types';
 
 export type FragmentCandidate = {
   label: string;
@@ -16,7 +17,7 @@ export type FragmentCandidate = {
 export function rankFragmentCompletions(targetText: string): FragmentCandidate[] {
   const headings: FragmentCandidate[] = extractHeadings(targetText).map((h) => ({
     label: h.text,
-    insertText: h.text,
+    insertText: fragmentFor(h),
     kind: 'heading',
     line: h.line + 1,
     level: h.level,
@@ -28,4 +29,13 @@ export function rankFragmentCompletions(targetText: string): FragmentCandidate[]
     line: info.line + 1,
   }));
   return [...headings, ...blocks].sort((a, b) => a.line - b.line);
+}
+
+// A paired [..] is plain text inside [[...]], but "|" starts display text and an unpaired or
+// nested bracket cannot be written in a link — those headings are inserted as their slug,
+// which the resolver matches too.
+const LINK_SAFE_RE = /^(?:[^[\]|]|\[[^[\]|]*\])*$/;
+
+function fragmentFor(h: Heading): string {
+  return LINK_SAFE_RE.test(h.text) ? h.text : h.slug;
 }

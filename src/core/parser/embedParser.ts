@@ -1,8 +1,9 @@
 import { buildFenceMask, isMasked, FenceMask } from '../fenceMask';
 import { ParsedRef } from '../types';
 
+// The fragment accepts a paired [..] as plain text (one nesting level), mirroring linkParser.
 const EMBED_RE =
-  /!\[\[(?<target>[^[\]|#\r\n]+)(?:#(?<fragment>[^[\]|\r\n]+))?(?:\|(?<sizeHint>[^[\]\r\n]+))?\]\]/g;
+  /!\[\[(?<target>[^[\]|#\r\n]+)(?:#(?<fragment>(?:[^[\]|\r\n]|\[[^[\]|\r\n]*\])+))?(?:\|(?<sizeHint>[^[\]\r\n]+))?\]\]/g;
 
 // `mask` may be supplied by callers that also run parseLinks on the same text, so the fence
 // mask is built once per document rather than once per parser.

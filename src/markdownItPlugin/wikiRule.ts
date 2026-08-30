@@ -27,8 +27,12 @@ export type WikiResolver = {
   ) => string | null;
 };
 
-const EMBED_RE = /!\[\[([^[\]|#\r\n]+)(?:#([^[\]|\r\n]+))?(?:\|([^[\]\r\n]+))?\]\]/g;
-const LINK_RE = /(?<!!)\[\[([^[\]|#\r\n]*)(?:#([^[\]|\r\n]+))?(?:\|([^[\]\r\n]+))?\]\]/g;
+// Kept in sync with core/parser/{embedParser,linkParser}: fragment and display accept one
+// level of paired [..] as plain text.
+const EMBED_RE =
+  /!\[\[([^[\]|#\r\n]+)(?:#((?:[^[\]|\r\n]|\[[^[\]|\r\n]*\])+))?(?:\|([^[\]\r\n]+))?\]\]/g;
+const LINK_RE =
+  /(?<!!)\[\[([^[\]|#\r\n]*)(?:#((?:[^[\]|\r\n]|\[[^[\]|\r\n]*\])+))?(?:\|((?:[^[\]\r\n]|\[[^[\]\r\n]*\])+))?\]\]/g;
 
 export function wikiPlugin(
   md: MarkdownIt,

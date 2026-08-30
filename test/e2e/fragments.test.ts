@@ -77,6 +77,74 @@ suite('Fragments — footnotes in headings', () => {
   });
 });
 
+suite('Fragments — headings with link-unsafe characters', () => {
+  const ws = (): vscode.Uri => vscode.workspace.workspaceFolders![0].uri;
+
+  test('the completion list survives typing a bracket inside the fragment', async () => {
+    const doc = await vscode.workspace.openTextDocument(vscode.Uri.joinPath(ws(), 'source.md'));
+    const editor = await vscode.window.showTextDocument(doc);
+    const end = doc.lineAt(doc.lineCount - 1).range.end;
+    await editor.edit((b) => b.insert(end, '\n[[target#Config ['));
+    try {
+      const pos = doc.lineAt(doc.lineCount - 1).range.end;
+      const list = await vscode.commands.executeCommand<vscode.CompletionList>(
+        'vscode.executeCompletionItemProvider',
+        doc.uri,
+        pos,
+      );
+      const labels = list.items.map((i) => (typeof i.label === 'string' ? i.label : i.label.label));
+      assert.ok(
+        labels.includes('Config [beta]'),
+        `expected completions, got: ${labels.join(', ')}`,
+      );
+    } finally {
+      await vscode.commands.executeCommand('workbench.action.revertAndCloseActiveEditor');
+    }
+  });
+
+  test('picking "Config [beta]" from completion inserts a fragment that resolves', async () => {
+    const doc = await vscode.workspace.openTextDocument(vscode.Uri.joinPath(ws(), 'source.md'));
+    const editor = await vscode.window.showTextDocument(doc);
+    const end = doc.lineAt(doc.lineCount - 1).range.end;
+    await editor.edit((b) => b.insert(end, '\n[[target#'));
+    try {
+      const pos = doc.lineAt(doc.lineCount - 1).range.end;
+      const list = await vscode.commands.executeCommand<vscode.CompletionList>(
+        'vscode.executeCompletionItemProvider',
+        doc.uri,
+        pos,
+        '#',
+      );
+      const item = list.items.find(
+        (i) => (typeof i.label === 'string' ? i.label : i.label.label) === 'Config [beta]',
+      );
+      assert.ok(item, 'expected the bracketed heading among the completions');
+      const inserted = typeof item!.insertText === 'string' ? item!.insertText : item!.label;
+      await editor.edit((b) => b.insert(doc.lineAt(doc.lineCount - 1).range.end, `${inserted}]]`));
+      const links = await vscode.commands.executeCommand<vscode.DocumentLink[]>(
+        'vscode.executeLinkProvider',
+        doc.uri,
+      );
+      const targetDoc = await vscode.workspace.openTextDocument(
+        vscode.Uri.joinPath(ws(), 'target.md'),
+      );
+      const headingLine = targetDoc
+        .getText()
+        .split(/\r?\n/)
+        .findIndex((l) => l.startsWith('## Config [beta]'));
+      const lastLine = doc.lineCount - 1;
+      const link = links.find((l) => l.range.start.line === lastLine);
+      assert.ok(
+        link?.target,
+        `the inserted text must form a resolvable link: ${doc.lineAt(lastLine).text}`,
+      );
+      assert.strictEqual(link!.target!.fragment, `L${headingLine + 1}`);
+    } finally {
+      await vscode.commands.executeCommand('workbench.action.revertAndCloseActiveEditor');
+    }
+  });
+});
+
 suite('Footnote hover (editor)', () => {
   const ws = (): vscode.Uri => vscode.workspace.workspaceFolders![0].uri;
 

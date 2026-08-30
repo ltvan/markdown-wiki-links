@@ -17,6 +17,11 @@ Use `[[wiki-link]]` for markdown and media files within the workspace only.
 [[#Heading in same file]]              Same-file heading link
 ```
 
+A paired `[...]` inside a heading or display text is plain text, as in regular Markdown links:
+`[[file name#Edge cases [brackets]]]` works as written. Only `|` (it starts display text) and
+unpaired or nested brackets cannot appear; autocomplete inserts such headings as their slug
+(`## Options | Flags` → `[[file name#options--flags]]`), which resolves like any heading link.
+
 A heading may carry footnote references; link to it without them. `## Setup[^1]` is reached as
 `[[file name#Setup]]` and autocomplete offers `Setup`. Preview navigation lands on the heading
 whether or not a footnote extension (such as `bierner.markdown-footnotes`) is installed — the

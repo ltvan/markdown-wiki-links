@@ -18,3 +18,7 @@ Para A. ^para-a
 Section with a footnote reference in its heading, cited again here.[^1]
 
 [^1]: The footnote text.
+
+## Config [beta]
+
+A heading that cannot be written inside a wiki-link as-is.

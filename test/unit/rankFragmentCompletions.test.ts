@@ -14,6 +14,22 @@ suite('rankFragmentCompletions (contract)', () => {
     assert.strictEqual(c.label, 'Setup');
     assert.strictEqual(c.insertText, 'Setup');
   });
+  test('paired brackets in a heading are inserted as-is; "|" still falls back to the slug', () => {
+    // A paired [..] is plain text inside [[...]]; "|" would start display text, so only
+    // pipe-bearing (or unpaired-bracket) headings insert the slug. Labels stay readable.
+    const cs = rankFragmentCompletions(
+      '## Config [beta]\n\n## Options | Flags\n\n## C# basics\n\n## Broken [half',
+    );
+    assert.deepStrictEqual(
+      cs.map((c) => [c.label, c.insertText]),
+      [
+        ['Config [beta]', 'Config [beta]'],
+        ['Options | Flags', 'options--flags'],
+        ['C# basics', 'C# basics'],
+        ['Broken [half', 'broken-half'],
+      ],
+    );
+  });
   test('block ids appear as ^id candidates', () => {
     const text = '# Top\n\nA paragraph. ^para-a';
     const cands = rankFragmentCompletions(text);
