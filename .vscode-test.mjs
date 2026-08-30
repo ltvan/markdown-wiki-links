@@ -53,4 +53,11 @@ export default defineConfig([
     launchArgs,
     mocha: { ui: 'tdd', timeout: 20000 },
   },
+  {
+    label: 'samples',
+    files: 'out/test/e2e/samples.test.js',
+    workspaceFolder: 'samples',
+    launchArgs,
+    mocha: { ui: 'tdd', timeout: 20000 },
+  },
 ]);

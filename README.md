@@ -56,6 +56,13 @@ Prefix any wikilink with `!` to embed its content inline:
   - A relative `[[folder1/folder2/file name]]` resolves to the unique file whose path ends with `folder1/folder2/file name.md` (or `.markdown`). If more than one file matches, the link is left unresolved.
   - `..` segments and absolute paths are not allowed — links never resolve outside the workspace.
 
+## Try it
+
+The [`samples/`](samples/README.md) folder is a small, human-readable workspace that demonstrates
+every feature above — each page explains one part of the syntax and uses it live. Open the folder
+in VSCode with the extension installed, or press `F5` in this repository and choose
+**Run Extension (samples)**.
+
 ## Configuration
 
 | Setting                          | Default                                                           | Purpose                                                                                                                                                                |

@@ -19,7 +19,7 @@ TypeScript, pnpm, esbuild bundling, `@vscode/test-cli` + `@vscode/test-electron`
 - `pnpm test` — `pretest` (format check, lint, build, compile) then unit + e2e
 - `pnpm lint` / `pnpm format` — ESLint / Prettier
 
-E2e suites are split per fixture workspace in `.vscode-test.mjs` (labels: `unique`, `ambiguous`, `boundary`, `renames`, `multiroot`, `fragments`, `embeds`); run one with `pnpm exec vscode-test --label <name>`. The `multiroot` label opens a `.code-workspace` with two roots.
+E2e suites are split per fixture workspace in `.vscode-test.mjs` (labels: `unique`, `ambiguous`, `boundary`, `renames`, `multiroot`, `fragments`, `embeds`, `samples`); run one with `pnpm exec vscode-test --label <name>`. The `multiroot` label opens a `.code-workspace` with two roots; `samples` opens the human-readable `samples/` handbook.
 
 ## Architecture
 
@@ -31,6 +31,8 @@ Hexagonal layering, enforced by ESLint `no-restricted-imports`:
 - `src/extension.ts` — composition root: activates, builds `IndexService`, wires providers.
 
 Tests: `test/unit/` (pure-core, fast) and `test/e2e/` (real Extension Development Host). E2e tests must not import `src/**` internals — they drive features through VSCode's public command surface (`vscode.executeLinkProvider`, `executeHoverProvider`, `executeCompletionItemProvider`, `applyEdit` with `RenameFile`).
+
+`samples/` is a human-readable demo workspace (a wiki-link handbook whose pages use the features they describe), excluded from the VSIX via `.vscodeignore` and opened by the `Run Extension (samples)` launch config. Its pages describe resolver/parser behavior, so a behavior change must update them like any other doc, and they are tested: `test/unit/samplesWorkspace.test.ts` resolves every sample link with the real core — both with `samples/` as the root and with the repository root (samples + `test/fixtures` + root files) as the root, so a sample name that collides with a fixture or root file fails the suite — and the `samples` e2e label asserts diagnostics appear only on the handbook's intentional demo links. Keep sample file names unique across the repository; they are Prettier-formatted (`format:check` covers them).
 
 ## Wiki-link syntax (authoritative spec)
 

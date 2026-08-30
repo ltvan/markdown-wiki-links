@@ -2,6 +2,7 @@
 .github/**
 .vscode/**
 .vscode-test/**
+samples/**
 .gitignore
 .editorconfig
 .node-version
